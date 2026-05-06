@@ -135,6 +135,12 @@ function getFilename(path) {
 	return filename;
 };
 
+function getTopLevelFolder(path) {
+    const match = path.match(/^\/?([^\/]+)\//);
+    return match ? match[1] : "";
+};
+
+
 function capitalize(str) {
 	return str[0].toUpperCase() + str.slice(1);
 };
@@ -205,6 +211,7 @@ function setTask(obj, cls) {
 	var taskIcon = eval("task"+capitalize(cls)+"Icon");
 	if (obj.due) { var relative = moment(obj.due).fromNow() } else { var relative = "" };
 	var noteFilename = getFilename(taskPath);
+	var noteTopFolder = getTopLevelFolder(taskPath);
 	if (noteIcon) { noteFilename = noteIcon+"&nbsp;"+noteFilename } else { noteFilename = taskIcon+"&nbsp;"+noteFilename; cls += " noNoteIcon" };
 	var taskSubpath = obj.header.subpath;
 	var taskLine = taskSubpath ? taskPath+"#"+taskSubpath : taskPath;
@@ -218,7 +225,7 @@ function setTask(obj, cls) {
  	} else {
  		var style = "--task-background:#7D7D7D33;--task-color:#7D7D7D;--dark-task-text-color:"+transColor("#7D7D7D", darker)+";--light-task-text-color:"+transColor("#7D7D7D", lighter);
  	};
-	var newTask = taskTemplate.replace("{{taskContent}}", taskText).replace("{{class}}", cls).replace("{{taskPath}}", taskLine).replace("{{due}}","done").replaceAll("{{style}}",style).replace("{{title}}", noteFilename + ": " + taskText).replace("{{note}}",noteFilename).replace("{{icon}}",taskIcon).replace("{{relative}}",relative);
+	var newTask = taskTemplate.replace("{{taskContent}}",  noteTopFolder === "" ? taskText : noteTopFolder + ": " + taskText).replace("{{class}}", cls).replace("{{taskPath}}", taskLine).replace("{{due}}","done").replaceAll("{{style}}",style).replace("{{title}}", noteFilename + ": " + taskText).replace("{{note}}",noteFilename).replace("{{icon}}",taskIcon).replace("{{relative}}",relative);
 	return newTask;
 };
 
